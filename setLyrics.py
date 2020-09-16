@@ -20,16 +20,18 @@ def set_lyrics_to_one_song(song_tags, lyrics):
     song_tags.save()
 
 
-def set_lyrics(songs_path):
+def set_lyrics(songs_path, force=False):
     for song_path in songs_path:
         song_tags = ID3(song_path)
         title = song_tags[TITLE]
         artist = song_tags[ARTIST]
-        lyrics = get_lyrics(title, artist)
-        if lyrics:
-            print('Setting lyrics...')
-            set_lyrics_to_one_song(song_tags, lyrics)
-            print('Done!')
+        lyrics_tag = get_lyrics_tag_name(song_tags)
+        if not song_tags[lyrics_tag] or force:
+            lyrics = get_lyrics(title, artist)
+            if lyrics:
+                print('Setting lyrics...')
+                set_lyrics_to_one_song(song_tags, lyrics)
+                print('Done!')
 
 
 def get_lyrics_tag_name(song_tags):
@@ -79,7 +81,7 @@ def main():
         elif ismp3(path):
             paths += [path]
     
-    set_lyrics(paths)
+    set_lyrics(paths, force=args.force)
 
 
 main()
