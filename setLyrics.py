@@ -23,10 +23,12 @@ def set_lyrics_to_one_song(song_tags, lyrics):
 def set_lyrics(songs_path, force=False):
     for song_path in songs_path:
         song_tags = ID3(song_path)
-        title = song_tags[TITLE]
-        artist = song_tags[ARTIST]
+        title = song_tags.get(TITLE, None)
+        artist = song_tags.get(ARTIST, None)
+        if not (title and artist):
+            print(f"[WARNING] The song {song_path} doesn't have a tittle or an artist")
         lyrics_tag = get_lyrics_tag_name(song_tags)
-        if not song_tags[lyrics_tag] or force:
+        if not lyrics_tag or not song_tags[lyrics_tag] or force:
             lyrics = get_lyrics(title, artist)
             if lyrics:
                 print('Setting lyrics...')
